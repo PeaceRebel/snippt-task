@@ -1,0 +1,58 @@
+<div class="container-fluid">
+  <div class="row">
+    <main role="main" class="col-md-9 ml-sm-5 col-lg-10 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          Hello, {{ user.username }}
+        </div>
+      </div>
+
+      <div>
+        <h2>Books slots</h2>
+        <form class="form-group" action="/slots" method="post">
+          <select class="custom-select custom-select-md" name="alumni">
+            <option selected>Choose Alumni</option>
+            {{#each alumni}}
+            <option value={{ this.username }}>{{ this.username }}</option>
+            {{/each}}
+          </select>
+          <div style="margin-top: 5px">
+            <label for="date">Date</label>
+            <input type="date" name="date">
+          </div>
+          <select class="custom-select custom-select-md" name="slot">
+            <option selected>Slot</option>
+            <option value="13:00-14:00">13:00-14:00</option>
+            <option value="16:00-17:00">16:00-17:00</option>
+            <option value="18:00-19:00">18:00-19:00</option>
+          </select>
+          <button style="margin-top: 10px"class="btn btn-primary" type="submit">Submit</button>
+        </form>
+      </div>
+      <h2>Section title</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Slot</th>
+              <th>Alumni</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each slots}}
+              <tr>
+                <td>{{ this.date }}</td>
+                <td>{{ this.slot }}</td>
+                <td>{{ this.alumni }}</td>
+                <td>{{ this.confirmed }}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>

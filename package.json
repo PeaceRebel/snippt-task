@@ -1,0 +1,29 @@
+{
+  "name": "snippt-scheduler",
+  "version": "1.0.0",
+  "description": "A simple student-alumni scheduler app.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "peacerebel",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "connect-flash": "*",
+    "cookie-parser": "^1.4.1",
+    "express": "*",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "*",
+    "mongodb": "*",
+    "mongoose": "*",
+    "morgan": "^1.9.0",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*"
+  }
+}

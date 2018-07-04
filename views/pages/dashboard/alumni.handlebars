@@ -1,0 +1,45 @@
+<div class="container-fluid">
+  <div class="row">
+      <main role="main" class="col-md-9 ml-sm-5 col-lg-10 px-4 col-lg-10 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+        <h5 class="h5">{{ user.permission }}</h5>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          Hello, {{ user.username }}
+        </div>
+      </div>
+
+      <h2>Section title</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>date</th>
+              <th>Slot</th>
+              <th>Student</th>
+              <th>Confirm?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each  slots}}
+            <tr>
+              <td>{{ this.date }}</td>
+              <td>{{ this.date }}</td>
+              <td>{{ this.student }}</td>
+              {{#if this.confirmed}}
+                <td>Confirmed</td>
+              {{else}}
+                <td>
+                  <form class="form-group" action="/slots/confirm" method="post">
+                    <button type="submit" name="id" class="btn btn-sm btn-success" value={{ this._id}}>Confirm</button>
+                  </form>
+                </td>
+              {{/if}}
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
