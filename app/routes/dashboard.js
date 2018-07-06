@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
+var moment = require('moment');
 
 var User = require('../models/user');
 var Slot = require('../models/slot');
 
 router.get('/', ensureAuthenticated, function(req, res){
+  // If alumni logs in, render alumni dashboard.
   if(req.user.permission == "alumni"){
     Slot.getAlumniSlots(req.user.username, function(err, docs){
       if(!err){
@@ -16,12 +18,15 @@ router.get('/', ensureAuthenticated, function(req, res){
     });
   }
   else{
+    // If student los in, render student dashboard.
+
     Slot.getUserSlots(req.user.username, function(err, docs){
       if(!err){
         var Slots = docs;
         User.getAlumni(function(err, docs){
           if(!err){
-            res.render('pages/dashboard/student', {alumni: docs, slots: Slots });
+
+            res.render('pages/dashboard/student', {alumni: docs, slots: Slots, date: date });
           }
           else {
             console.log("getAlumni: Error: " + JSON.stringify(err));
