@@ -5,8 +5,14 @@ var moment = require('moment');
 var User = require('../models/user');
 var Slot = require('../models/slot');
 
+var today = moment().format('YYYY-MM-DD');
+var nextWeek = moment().add(6,'days').format('YYYY-MM-DD');
+var date = { today, nextWeek};
+
 router.get('/', ensureAuthenticated, function(req, res){
+
   // If alumni logs in, render alumni dashboard.
+  
   if(req.user.permission == "alumni"){
     Slot.getAlumniSlots(req.user.username, function(err, docs){
       if(!err){
@@ -18,6 +24,7 @@ router.get('/', ensureAuthenticated, function(req, res){
     });
   }
   else{
+
     // If student los in, render student dashboard.
 
     Slot.getUserSlots(req.user.username, function(err, docs){
@@ -25,7 +32,7 @@ router.get('/', ensureAuthenticated, function(req, res){
         var Slots = docs;
         User.getAlumni(function(err, docs){
           if(!err){
-
+            // date: Student can only book a slot at most a week early.
             res.render('pages/dashboard/student', {alumni: docs, slots: Slots, date: date });
           }
           else {

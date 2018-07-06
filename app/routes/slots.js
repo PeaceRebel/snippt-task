@@ -18,44 +18,66 @@ router.get('/', ensureAuthenticated, function(req, res){
 
 router.post('/', ensureAuthenticated, function(req, res){
   if(req.user.permission == 'student'){
-    var date = req.body.date;
-    var slot = req.body.slot;
-    var alumni = req.body.alumni;
-    var student = req.user.username;
 
-    Slot.pendingSlots(student, function(err, docs){
-      if(!err){
-        if(docs.length){
-          // If there are slots booked by 'student' to be confirmed by 'alumnus'.
-          req.flash('error_msg', 'You have a slot yet to be confirmed.');
-          res.redirect('/dashboard');
-        }
-        else {
-          // If there's no slot booked by this 'student' that 'alumnus' did not confirm.
-          var newSlot = new Slot({
-            date: date,
-            slot: slot,
-            alumni: alumni,
-            student: student
-          });
+    if(req.user.slots_booked < 2){
+      var date = req.body.date;
 
-          //console.log('Slot: ' + JSON.stringify(newSlot));
+      if( moment().add(6, 'days').format('YYYY-MM-DD') >= date){
+        var slot = req.body.slot;
+        var alumni = req.body.alumni;
+        var student = req.user.username;
 
-          newSlot.save(function(err){
-            if(!err){
-              console.log('Slot saved successfully');
+        var slots_booked = req.user.slots_booked + 1;
+
+        Slot.pendingSlots(student, function(err, docs){
+          if(!err){
+            if(docs.length){
+              // If there are slots booked by 'student' to be confirmed by 'alumnus'.
+              req.flash('error_msg', 'You have a slot yet to be confirmed.');
               res.redirect('/dashboard');
             }
             else {
-              console.log('Error saving slot'+ JSON.stringify(err));
+              // If there's no slot booked by this 'student' that 'alumnus' did not confirm.
+              var newSlot = new Slot({
+                date: date,
+                slot: slot,
+                alumni: alumni,
+                student: student
+              });
+
+              //console.log('Slot: ' + JSON.stringify(newSlot));
+
+              newSlot.save(function(err){
+                if(!err){
+                  User.findByIdAndUpdate(req.user._id, { slots_booked: slots_booked }, function(err, docs){
+                    if(err){
+                      console.log('Update User booking: Error: ' + JSON.stringify(err));
+                    }
+                  });
+                  console.log('Slot saved successfully');
+                  res.redirect('/dashboard');
+                }
+                else {
+                  console.log('Error saving slot'+ JSON.stringify(err));
+                }
+              });
             }
-          });
-        }
+          }
+          else{
+            console.error('Error Pending slots: ' + JSON.stringify(docs));
+          }
+        });
       }
-      else{
-        console.error('Error Pending slots: ' + JSON.stringify(docs));
+      else {
+        req.flash('error_msg', 'You can only book a slot at most week in advance.');
+        res.redirect('/dashboard');
       }
-    });
+    }
+
+    else {
+      req.flash('error_msg', 'You have booked maximum number of slots.');
+      res.redirect('/dashboard');
+    }
   }
   else {
     req.flash('error_msg', 'You are not authorized to do this.');

@@ -15,6 +15,10 @@ var UserSchema = mongoose.Schema({
 		type: String,
 		enum: ['alumni', 'student'],
 		default: 'student'
+	},
+	slots_booked: {
+		type: Number,
+		default: 0
 	}
 });
 
