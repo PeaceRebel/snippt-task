@@ -13,7 +13,7 @@
         <h2>Books slots</h2>
         <form class="form-group" action="/slots" method="post">
           <select class="custom-select custom-select-md" name="alumni">
-            <option selected>Choose Alumni</option>
+            <option selected disabled>Choose Alumni</option>
             {{#each alumni}}
             <option value={{ this.username }}>{{ this.username }}</option>
             {{/each}}
@@ -23,7 +23,7 @@
             <input type="date" name="date" min={{ date.today }} max={{ date.nextWeek }}>
           </div>
           <select class="custom-select custom-select-md" name="slot" required>
-            <option selected>Slot</option>
+            <option selected disabled>Slot</option>
             <option value="13:00-14:00">13:00-14:00</option>
             <option value="16:00-17:00">16:00-17:00</option>
             <option value="18:00-19:00">18:00-19:00</option>
