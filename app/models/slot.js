@@ -15,7 +15,12 @@ var SlotSchema = mongoose.Schema({
   student:{
     type: String
   },
-  confirmed: {
+  status: {
+    type: String,
+    enum: ['unconfirmed', 'confirmed', 'rejected'],
+    default: 'unconfirmed'
+  },
+  al_act: {
     type: Boolean,
     default: false
   },
@@ -40,6 +45,11 @@ module.exports.getUserSlots = function(username, callback){
 
 // Get all slots, that are still pending, booked by a student.
 module.exports.pendingSlots = function(username, callback){
-  var query = {student: username, confirmed: false};
+  var query = {student: username, status: 'unconfirmed'};
+  Slot.find(query, callback);
+}
+
+module.exports.allPendingSlots = function(callback){
+  var query = { status: {"$in": ['unconfirmed', 'confirmed']}};
   Slot.find(query, callback);
 }

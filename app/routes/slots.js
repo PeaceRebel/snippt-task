@@ -22,7 +22,8 @@ router.post('/', ensureAuthenticated, function(req, res){
     if(req.user.slots_booked < 2){
       var date = req.body.date;
 
-      if( moment().add(6, 'days').format('YYYY-MM-DD') >= date){
+      if( (moment().add(7, 'days').format('YYYY-MM-DD') >= date) &&
+      moment().add(1, 'days').format('YYYY-MM-DD') <= date){
         var slot = req.body.slot;
         var alumni = req.body.alumni;
         var student = req.user.username;
@@ -38,27 +39,47 @@ router.post('/', ensureAuthenticated, function(req, res){
             }
             else {
               // If there's no slot booked by this 'student' that 'alumnus' did not confirm.
-              var newSlot = new Slot({
-                date: date,
-                slot: slot,
-                alumni: alumni,
-                student: student
-              });
-
-              //console.log('Slot: ' + JSON.stringify(newSlot));
-
-              newSlot.save(function(err){
+              Slot.allPendingSlots(function(err, docs){
                 if(!err){
-                  User.findByIdAndUpdate(req.user._id, { slots_booked: slots_booked }, function(err, docs){
-                    if(err){
-                      console.log('Update User booking: Error: ' + JSON.stringify(err));
+                  var flag = 0;
+                  for(var i = 0; i < docs.length; i++){
+                    if((docs[i].date == date) && (docs[i].slot == slot) && (docs[i].alumni == alumni)){
+                      flag = 1;
+                      //console.log('Here: allpendingSlots', docs);
                     }
-                  });
-                  console.log('Slot saved successfully');
-                  res.redirect('/dashboard');
+                  }
+                  if(!flag){
+                    var newSlot = new Slot({
+                      date: date,
+                      slot: slot,
+                      alumni: alumni,
+                      student: student
+                    });
+
+                    //console.log('Slot: ' + JSON.stringify(newSlot));
+
+                    newSlot.save(function(err){
+                      if(!err){
+                        User.findByIdAndUpdate(req.user._id, { slots_booked: slots_booked }, function(err, docs){
+                          if(err){
+                            console.log('Update User booking: Error: ' + JSON.stringify(err));
+                          }
+                        });
+                        console.log('Slot saved successfully');
+                        res.redirect('/dashboard');
+                      }
+                      else {
+                        console.log('Error saving slot'+ JSON.stringify(err));
+                      }
+                    });
+                  }
+                  else {
+                    req.flash('error_msg', 'This slot is already taken. Try another.');
+                    res.redirect('/dashboard');
+                  }
+
                 }
-                else {
-                  console.log('Error saving slot'+ JSON.stringify(err));
+                else{
                 }
               });
             }
@@ -85,10 +106,29 @@ router.post('/', ensureAuthenticated, function(req, res){
   }
 });
 
+router.post('/reject', ensureAuthenticated, function(req, res){
+  if(req.user.permission == 'alumni'){
+    var id = req.body.id;
+    Slot.findByIdAndUpdate(id, { status: 'rejected', al_act: true }, function(err, docs){
+      if(!err){
+        res.redirect('/dashboard');
+      }
+      else {
+        console.log('Update Slot: Error: ' + JSON.stringify(err));
+      }
+    });
+  }
+  else {
+    req.flash('error_msg', 'You are not authorized to do this.');
+    res.redirect('/');
+  }
+});
+
+
 router.post('/confirm', ensureAuthenticated, function(req, res){
   if(req.user.permission == 'alumni'){
     var id = req.body.id;
-    Slot.findByIdAndUpdate(id, { confirmed: true }, function(err, docs){
+    Slot.findByIdAndUpdate(id, { status: 'confirmed', al_act: true }, function(err, docs){
       if(!err){
         res.redirect('/dashboard');
       }

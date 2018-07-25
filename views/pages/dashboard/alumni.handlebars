@@ -14,10 +14,10 @@
         <table class="table table-striped table-sm">
           <thead>
             <tr>
-              <th>date</th>
+              <th>Date</th>
               <th>Slot</th>
               <th>Student</th>
-              <th>Confirm?</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -26,13 +26,18 @@
               <td>{{ this.date }}</td>
               <td>{{ this.date }}</td>
               <td>{{ this.student }}</td>
-              {{#if this.confirmed}}
-                <td>Confirmed</td>
+              {{#if al_act}}
+                <td>{{ this.status }}</td>
               {{else}}
                 <td>
+                  <div class="btn-group">
+                  <form class="form-group" action="/slots/reject" method="post">
+                    <button type="submit" name="id" class="btn btn-sm btn-danger" value={{ this._id}}>Reject</button>
+                  </form>
                   <form class="form-group" action="/slots/confirm" method="post">
                     <button type="submit" name="id" class="btn btn-sm btn-success" value={{ this._id}}>Confirm</button>
                   </form>
+                </div>
                 </td>
               {{/if}}
             </tr>

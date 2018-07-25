@@ -5,14 +5,14 @@ var moment = require('moment');
 var User = require('../models/user');
 var Slot = require('../models/slot');
 
-var today = moment().format('YYYY-MM-DD');
-var nextWeek = moment().add(6,'days').format('YYYY-MM-DD');
+var today = moment().add(1, 'days').format('YYYY-MM-DD');
+var nextWeek = moment().add(7,'days').format('YYYY-MM-DD');
 var date = { today, nextWeek};
 
 router.get('/', ensureAuthenticated, function(req, res){
 
   // If alumni logs in, render alumni dashboard.
-  
+
   if(req.user.permission == "alumni"){
     Slot.getAlumniSlots(req.user.username, function(err, docs){
       if(!err){
